@@ -1,6 +1,6 @@
 <div align="center">
 
-# Doom Emacs TEST LOL
+# Doom Emacs
 
 [Install](#install) • [Documentation] • [FAQ] • [Screenshots] • [Contribute](#contribute)
 
