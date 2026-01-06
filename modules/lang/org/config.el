@@ -217,6 +217,13 @@ Is relative to `org-directory', unless it is absolute. Is used in Doom's default
   (after! ob
     (add-to-list 'org-babel-default-lob-header-args '(:sync)))
 
+  (defadvice! +org--exclude-expand-noweb-references-a (fn &rest args)
+    :around #'ob-async-org-babel-execute-src-block
+    (let ((async-inject-variables-exclude-regexps
+           (cons "\\`org-babel-expand-noweb-references--cache-buffer\\'"
+                 async-inject-variables-exclude-regexps)))
+      (apply fn args)))
+
   (defadvice! +org-babel-disable-async-maybe-a (fn &optional orig-fn arg info params)
     "Use ob-comint where supported, disable async altogether where it isn't.
 
@@ -291,11 +298,11 @@ Also adds support for a `:sync' parameter to override `:async'."
   "Load babel libraries lazily when babel blocks are executed."
   (defun +org--babel-lazy-load (lang &optional async)
     (cl-check-type lang (or symbol null))
+    ;; ob-async has its own agenda for lazy loading packages (in the child
+    ;; process), so we only need to make sure it's loaded.
+    (when async
+      (require 'ob-async nil t))
     (unless (cdr (assq lang org-babel-load-languages))
-      (when async
-        ;; ob-async has its own agenda for lazy loading packages (in the child
-        ;; process), so we only need to make sure it's loaded.
-        (require 'ob-async nil t))
       (prog1 (or (run-hook-with-args-until-success '+org-babel-load-functions lang)
                  (require (intern (format "ob-%s" lang)) nil t)
                  (require lang nil t))
@@ -1024,7 +1031,7 @@ between the two."
 (use-package! org-clock ; built-in
   :commands org-clock-save
   :init
-  (setq org-clock-persist-file (concat doom-data-dir "org-clock-save.el"))
+  (setq org-clock-persist-file (file-name-concat doom-profile-data-dir "org-clock-save.el"))
   (defadvice! +org--clock-load-a (&rest _)
     "Lazy load org-clock until its commands are used."
     :before '(org-clock-in
@@ -1206,9 +1213,9 @@ between the two."
   (defvar org-attach-id-dir nil)
   (defvar org-babel-python-command nil)
 
-  (setq org-persist-directory (concat doom-cache-dir "org/persist/")
-        org-publish-timestamp-directory (concat doom-cache-dir "org/timestamps/")
-        org-preview-latex-image-directory (concat doom-cache-dir "org/latex/")
+  (setq org-persist-directory (file-name-concat doom-profile-cache-dir "org" "persist/")
+        org-publish-timestamp-directory (file-name-concat doom-profile-cache-dir "org" "timestamps/")
+        org-preview-latex-image-directory (file-name-concat doom-profile-cache-dir "org" "latex/")
         ;; Recognize a), A), a., A., etc -- must be set before org is loaded.
         org-list-allow-alphabetical t)
 

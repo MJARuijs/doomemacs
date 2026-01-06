@@ -89,7 +89,7 @@
        :desc "Sudo find file"              "U"   #'doom/sudo-find-file
        :desc "Yank file path"              "y"   #'+default/yank-buffer-path
        :desc "Yank file path from project" "Y"   #'+default/yank-buffer-path-relative-to-project
-       :desc "Open scratch buffer"         "x"   #'doom/open-scratch-buffer
+       :desc "Toggle scratch buffer"       "x"   #'doom/toggle-scratch-buffer
        :desc "Switch to scratch buffer"    "X"   #'doom/switch-to-scratch-buffer)
 
       ;;; <leader> r --- remote
@@ -286,7 +286,7 @@
        :desc "Search project for symbol"   "." #'+default/search-project-for-symbol-at-point
        :desc "Find file in other project"  "F" #'doom/find-file-in-other-project
        :desc "Search project"              "s" #'+default/search-project
-       :desc "Open project scratch buffer" "x" #'doom/open-project-scratch-buffer
+       :desc "Toggle project scratch buffer" "x" #'doom/toggle-project-scratch-buffer
        :desc "Switch to project scratch buffer" "X" #'doom/switch-to-project-scratch-buffer
        ;; later expanded by projectile
        (:prefix ("4" . "in other window"))
@@ -328,7 +328,7 @@
        :desc "Soft line wrapping"           "w" #'visual-line-mode
        (:when (modulep! :editor word-wrap)
         :desc "Soft line wrapping"          "w" #'+word-wrap-mode)
-       (:when (modulep! :checkers syntax)
+       (:when (modulep! :checkers syntax -flymake)
         :desc "Flycheck"                   "f" #'flycheck-mode)
        (:when (modulep! :ui indent-guides)
         :desc "Indent guides"              "i" #'indent-bars-mode)
